@@ -1,6 +1,6 @@
 # primeg2-sat
 
-**please read our [disclaimer](DISCLAIMER.md) before using this project.**
+# **please read the [disclaimer](DISCLAIMER.md) before using this project.**
 
 this is my first repository. i wanted to make a program that makes solving and understanding sat questions easier for students.
 
