@@ -70,14 +70,13 @@ def wait():
     input("\nPress Enter to continue.")
 
 # ------------------------------------------------------------
-#  SAFE EXPRESSION EVALUATOR (whitelist-based)
+#  EXPRESSION EVALUATOR (whitelist-based)
 # ------------------------------------------------------------
 def safe_eval(expr, xval):
     expr = expr.replace("x", str(xval))
     return _safe_eval_constant(expr)
 
 def _safe_eval_constant(expr):
-    # Allow all lowercase letters (for function names), digits, and math symbols
     allowed = set("0123456789.+-*/() abcdefghijklmnopqrstuvwxyz")
     test = expr.replace(" ", "")
     for ch in test:
