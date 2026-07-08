@@ -1,31 +1,44 @@
 # primeg2-sat
-this is my first repository, i wanted to make a program that makes solving and understanding sat questions easier for students. 
 
-this is portable, meaning any device that has python and a terminal can run it (make sure you are in a sandbox/emulator/vm)
+this is my first repository. i wanted to make a program that makes solving and understanding sat questions easier for students.
 
-i have been using the hp prime virtual calculator to test this, so your handheld prime g2 calculator or any python capable graphing calculator may experience bugs
-if youre on the python numeric view, use this command: || exec(open("sat.py").read()) ||
+this is a portable sat math solver, built for graphing calculators and their official emulators. running it on a regular pc with python is possible **only** inside a sandbox, virtual machine, or calculator emulator — never in your main terminal.
 
-any issues please reach out
+i have been using the hp prime virtual calculator to test this. the physical hp prime g2 should work the same, but other python‑capable graphing calculators (ti‑84 evo, numworks, casio fx‑cg50) may run into small quirks because i haven't tested them personally. please let me know if you find any.
 
-# why the prime g2?
-simply because it has better hardware
+## launching on the hp prime (virtual or physical)
 
-# will you make a ti version?
-maybe... we will see
+in the python numeric view, use this command:
+exec(open("sat.py").read())
 
-# installation (for hp prime)
-1. install hp connectivity kit, and the hp prime virtual calculator (unless you already got one)
+## what's inside
+
+- step‑by‑step solvers for over 80 sat math topics
+- a universal equation solver — just type the equation (e.g., `2x+5=17`)
+- a built‑in sat formula reference with examples
+- text guides for tricky conceptual topics like surveys, data visualization, circle theorems, and more
+- calculator utilities like fraction simplifier, gcf, prime factorization, and others
+
+## why the hp prime g2?
+
+simply because it has better hardware.
+
+## will you make a ti version?
+
+maybe... we will see.
+
+## installation (for hp prime)
+
+1. install the hp connectivity kit and the hp prime virtual calculator (unless you already have one)
 2. locate your calculator, then double click
-3. click application libary
+3. click application library
 4. click python
-5. right click files, then add file, then this program
-6. start the program using the command above or your perferred method
+5. right‑click files, then add file, then add this program
+6. start the program using the command above or your preferred method
 
-# installation on any device
-1. must have a terminal with python already installed
-2. download sat.py
-3. python /the/path/to/sat.py
+## a huge safety note
+
+the universal equation solver uses a restricted `eval()` that is safe inside a calculator's locked‑down python environment. on a regular computer, a malicious input could potentially escape the whitelist. **do not run this script in a standard python terminal on your desktop.** if you really must run it outside a calculator, use an official emulator (like the hp prime virtual calculator), a sandbox, or a micropython environment that mimics a calculator. always be careful, and you better know what you're doing. :)
 
 ## license (gnu gpl 3.0)
 
@@ -39,14 +52,20 @@ this project uses the gnu general public license version 3.0.
 
 **you must:**
 - keep the same gpl 3.0 license if you distribute your version
-- make your changes open-source too
+- make your changes open‑source too
 - keep the original copyright notice and license text
 
 **the catch:**
 there's no warranty — if something breaks, i'm not responsible.
-but that's standard for open-source software.
+but that's standard for open‑source software.
 
 **why gpl 3.0?**
-i chose this license so that any improvements to the solver stay
-free and open for everyone. nobody can take this tool, tweak it,
-and lock it behind a paywall. the math help stays free — forever.
+i chose this license so that any improvements to the solver stay free and open for everyone. nobody can take this tool, tweak it, and lock it behind a paywall. the math help stays free — forever.
+
+## contributing
+
+found a bug? have an idea? open an issue or a pull request. i'm learning too, so i'd love the help.
+
+## thanks
+
+built for students who want to truly understand the math. hope it helps!
