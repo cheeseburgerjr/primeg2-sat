@@ -1,5 +1,7 @@
 # primeg2-sat
 
+**please read our [disclaimer](DISCLAIMER.md) before using this project.**
+
 this is my first repository. i wanted to make a program that makes solving and understanding sat questions easier for students.
 
 this is a portable sat math solver, built for graphing calculators and their official emulators. running it on a regular pc with python is possible **only** inside a sandbox, virtual machine, or calculator emulator — never in your main terminal.
