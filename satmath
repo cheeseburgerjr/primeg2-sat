@@ -77,7 +77,8 @@ def safe_eval(expr, xval):
     return _safe_eval_constant(expr)
 
 def _safe_eval_constant(expr):
-    allowed = set("0123456789.+-*/() sqrtabd")
+    # Allow all lowercase letters (for function names), digits, and math symbols
+    allowed = set("0123456789.+-*/() abcdefghijklmnopqrstuvwxyz")
     test = expr.replace(" ", "")
     for ch in test:
         if ch not in allowed:
@@ -85,11 +86,12 @@ def _safe_eval_constant(expr):
     expr = expr.replace("^", "**")
     safe_dict = {"sqrt": math.sqrt, "abs": abs,
                  "sin": math.sin, "cos": math.cos, "tan": math.tan,
+                 "asin": math.asin, "acos": math.acos, "atan": math.atan,
                  "pi": math.pi, "e": math.e}
     return eval(expr, {"__builtins__": {}}, safe_dict)
 
 # ------------------------------------------------------------
-#  FORMULA REFERENCE (unchanged)
+#  FORMULA REFERENCE
 # ------------------------------------------------------------
 FORMULA_REFERENCE = {
     "Slope": {
@@ -193,7 +195,6 @@ FORMULA_REFERENCE = {
 # ================================================================
 #  TEXT GUIDES
 # ================================================================
-
 def guide_linear_inequalities_two_vars():
     clear_screen()
     print("=" * 40)
@@ -338,9 +339,788 @@ Always check:
 """)
     wait()
 
-# ================================================================
-#  MENU SYSTEM (updated to use guides)
-# ================================================================
+def guide_function_transformations():
+    clear_screen()
+    print("FUNCTION TRANSFORMATIONS")
+    print("========================")
+    print("""
+Given parent function f(x), transformations:
+- f(x)+k : vertical shift up k (down if -)
+- f(x+k) : horizontal shift left k (right if -)
+- -f(x)  : reflection over x-axis
+- f(-x)  : reflection over y-axis
+- a*f(x) : vertical stretch if |a|>1, compress if 0<|a|<1
+- f(b*x): horizontal stretch if 0<|b|<1, compress if |b|>1
+
+Example: g(x) = 2*(x-3)^2 + 1
+Parent: f(x)=x^2.
+Transformations: right 3, vertical stretch x2, up 1.
+Vertex moves from (0,0) to (3,1), parabola narrower.
+""")
+    wait()
+
+def guide_inverse_functions():
+    clear_screen()
+    print("INVERSE FUNCTIONS")
+    print("================")
+    print("""
+Inverse f^-1(x) "undoes" f(x).
+- To find: replace f(x) with y, swap x and y, solve for y.
+- Graph is reflection over line y=x.
+- Domain of f is range of f^-1 and vice versa.
+
+Example: f(x) = (2x+1)/3
+Swap: x = (2y+1)/3 -> 3x = 2y+1 -> y = (3x-1)/2
+Thus f^-1(x) = (3x-1)/2
+""")
+    wait()
+
+def guide_piecewise_functions():
+    clear_screen()
+    print("PIECEWISE FUNCTIONS")
+    print("===================")
+    print("""
+A function defined by different formulas over different
+intervals. Evaluate by checking which condition x satisfies.
+
+Example: f(x) = { x^2   for x < 2
+                { 3x-1  for x >= 2
+Find f(1): 1<2 -> f(1)=1^2=1
+Find f(3): 3>=2 -> f(3)=3*3-1=8
+""")
+    wait()
+
+def guide_work_rate_problems():
+    clear_screen()
+    print("WORK / RATE PROBLEMS")
+    print("====================")
+    print("""
+Combine rates: 1/time1 + 1/time2 = 1/total_time
+
+Example: Alice can paint a house in 6 hours, Bob in 4 hours.
+How long together?
+1/6 + 1/4 = 1/t
+(2/12 + 3/12) = 5/12 = 1/t -> t = 12/5 = 2.4 hours.
+""")
+    wait()
+
+def guide_mixture_problems():
+    clear_screen()
+    print("MIXTURE PROBLEMS")
+    print("================")
+    print("""
+Set up a system: amount and concentration.
+
+Example: Mix 30% acid with 10% acid to get 50L of 22% acid.
+Let x = volume of 30%, y = volume of 10%.
+x + y = 50
+0.30x + 0.10y = 0.22(50)=11
+Solve -> x=30, y=20.
+""")
+    wait()
+
+def guide_distance_rate_time_advanced():
+    clear_screen()
+    print("DISTANCE/RATE/TIME (ADVANCED)")
+    print("============================")
+    print("""
+Two objects moving toward each other: combined speed.
+Two objects moving apart: sum of speeds.
+Circular tracks: relative speed for catching up.
+
+Example: Two trains 200 miles apart start toward each other,
+one at 60 mph, other at 40 mph. When do they meet?
+Combined speed = 100 mph, time = 200/100 = 2 hours.
+""")
+    wait()
+
+def guide_circle_theorems():
+    clear_screen()
+    print("CIRCLE THEOREMS")
+    print("===============")
+    print("""
+- Inscribed angle = half the measure of its intercepted arc.
+- Central angle = arc measure.
+- Angle in a semicircle is a right angle.
+- Tangent is perpendicular to radius at point of tangency.
+- Intersecting chords: product of segments are equal.
+""")
+    wait()
+
+def guide_unit_circle():
+    clear_screen()
+    print("UNIT CIRCLE & EXACT VALUES")
+    print("==========================")
+    print("""
+Common angles (degrees -> radians):
+0:0, 30:pi/6, 45:pi/4, 60:pi/3, 90:pi/2
+sin/cos values:
+30 deg: sin=1/2, cos=sqrt3/2
+45 deg: sin=sqrt2/2, cos=sqrt2/2
+60 deg: sin=sqrt3/2, cos=1/2
+""")
+    wait()
+
+def guide_conic_sections():
+    clear_screen()
+    print("CONIC SECTIONS (Parabola, Circle, Ellipse, Hyperbola)")
+    print("====================================================")
+    print("""
+SAT primarily tests circle and parabola. Know:
+Circle: (x-h)^2+(y-k)^2=r^2
+Parabola: y=ax^2+bx+c, vertex at x=-b/(2a)
+Ellipse: x^2/a^2 + y^2/b^2 = 1 (horizontal if a>b)
+Hyperbola: x^2/a^2 - y^2/b^2 = 1 (opens left/right)
+Questions may ask to identify the shape from an equation.
+""")
+    wait()
+
+def guide_even_odd_functions():
+    clear_screen()
+    print("EVEN & ODD FUNCTIONS")
+    print("====================")
+    print("""
+Even: f(-x)=f(x) (symmetric about y-axis, e.g., x^2)
+Odd: f(-x)=-f(x) (symmetric about origin, e.g., x^3)
+Test by substituting -x.
+""")
+    wait()
+
+def guide_domain_range():
+    clear_screen()
+    print("DOMAIN & RANGE")
+    print("==============")
+    print("""
+Domain: all possible x-values.
+Look for: denominator not zero, inside sqrt >=0, inside log >0.
+Range: possible y-values.
+For quadratic: vertex's y is max/min if a<0/a>0.
+""")
+    wait()
+
+def guide_function_composition():
+    clear_screen()
+    print("FUNCTION COMPOSITION")
+    print("====================")
+    print("""
+(f o g)(x) = f(g(x)). Evaluate inner function first.
+Example: f(x)=2x, g(x)=x+3 -> f(g(4)) = f(7)=14.
+""")
+    wait()
+
+# ------------------------------------------------------------
+#  NEW SOLVERS (Additional Topics)
+# ------------------------------------------------------------
+def logarithms():
+    clear_screen()
+    print("LOGARITHMS")
+    print("1. Evaluate log_b(x)")
+    print("2. Solve log_b(ax+c) = d")
+    ch = input("Choice: ")
+    if ch == "1":
+        b = get_float("base b = ")
+        x = get_positive_float("x = ")
+        res = math.log(x, b)
+        print("log_{}({}) = {}".format(b, x, res))
+    elif ch == "2":
+        b = get_float("base b = ")
+        a = get_float("a = "); c = get_float("c = "); d = get_float("d = ")
+        rhs = b ** d
+        if a == 0:
+            print("Invalid: a=0.")
+        else:
+            x = (rhs - c) / a
+            if a*x + c <= 0:
+                print("Argument must be >0, no solution.")
+            else:
+                print("Solution: x = {}".format(x))
+    else:
+        print("Invalid.")
+    wait()
+
+def exponential_equations():
+    clear_screen()
+    print("EXPONENTIAL EQUATIONS")
+    print("Solve b^(ax+c) = d")
+    b = get_positive_float("base b = ")
+    a = get_float("a = "); c = get_float("c = "); d = get_positive_float("d = ")
+    if b == 1:
+        print("Base 1 trivial.")
+    else:
+        log_val = math.log(d, b)
+        if a == 0:
+            print("No variable.")
+        else:
+            x = (log_val - c) / a
+            print("Solution: x = {}".format(x))
+    wait()
+
+def sequences_series():
+    clear_screen()
+    print("SEQUENCES & SERIES")
+    print("1. Arithmetic: nth term & sum")
+    print("2. Geometric: nth term & sum (finite/infinite)")
+    ch = input("Choice: ")
+    if ch == "1":
+        a1 = get_float("first term a1 = ")
+        d = get_float("common difference d = ")
+        n = get_int("n = ")
+        an = a1 + (n-1)*d
+        Sn = n/2 * (a1 + an)
+        print("Term a{} = {}".format(n, an))
+        print("Sum of first {} terms = {}".format(n, Sn))
+    elif ch == "2":
+        a1 = get_float("first term a1 = ")
+        r = get_float("common ratio r = ")
+        n = get_int("n = ")
+        an = a1 * (r ** (n-1))
+        print("Term a{} = {}".format(n, an))
+        if r == 1:
+            Sn = a1 * n
+        else:
+            Sn = a1 * (1 - r**n) / (1 - r)
+        print("Sum of first {} terms = {}".format(n, Sn))
+        if abs(r) < 1:
+            S_inf = a1 / (1 - r)
+            print("Infinite sum (|r|<1) = {}".format(S_inf))
+        else:
+            print("No infinite sum (|r|>=1).")
+    else:
+        print("Invalid.")
+    wait()
+
+def complex_numbers():
+    clear_screen()
+    print("COMPLEX NUMBERS (a+bi)")
+    print("1. Add / Subtract")
+    print("2. Multiply")
+    print("3. Divide")
+    print("4. Modulus & Conjugate")
+    ch = input("Choice: ")
+    a1 = get_float("a1 = "); b1 = get_float("b1 = ")
+    if ch != "4":
+        a2 = get_float("a2 = "); b2 = get_float("b2 = ")
+    if ch == "1":
+        s = input("Add (+) or Subtract (-): ")
+        if s == "+":
+            real = a1 + a2; imag = b1 + b2
+        else:
+            real = a1 - a2; imag = b1 - b2
+        print("Result: {} + {}i".format(real, imag))
+    elif ch == "2":
+        real = a1*a2 - b1*b2
+        imag = a1*b2 + a2*b1
+        print("Product: {} + {}i".format(real, imag))
+    elif ch == "3":
+        denom = a2**2 + b2**2
+        if denom == 0:
+            print("Cannot divide by zero.")
+        else:
+            real = (a1*a2 + b1*b2) / denom
+            imag = (a2*b1 - a1*b2) / denom
+            print("Quotient: {} + {}i".format(real, imag))
+    elif ch == "4":
+        mod = math.sqrt(a1**2 + b1**2)
+        print("Modulus = {}".format(mod))
+        print("Conjugate = {} - {}i".format(a1, b1))
+    else:
+        print("Invalid.")
+    wait()
+
+def combinatorics():
+    clear_screen()
+    print("COUNTING & PROBABILITY")
+    print("1. Factorial n!")
+    print("2. Permutations nPr")
+    print("3. Combinations nCr")
+    ch = input("Choice: ")
+    if ch == "1":
+        n = get_int("n = ")
+        if n < 0:
+            print("Invalid.")
+        else:
+            fact = 1
+            for i in range(2, n+1):
+                fact *= i
+            print("{}! = {}".format(n, fact))
+    elif ch == "2":
+        n = get_int("n = "); r = get_int("r = ")
+        if r < 0 or r > n:
+            print("Invalid.")
+        else:
+            perm = 1
+            for i in range(n, n-r, -1):
+                perm *= i
+            print("{}P{} = {}".format(n, r, perm))
+    elif ch == "3":
+        n = get_int("n = "); r = get_int("r = ")
+        if r < 0 or r > n:
+            print("Invalid.")
+        else:
+            comb = 1
+            for i in range(1, r+1):
+                comb = comb * (n - i + 1) // i
+            print("{}C{} = {}".format(n, r, comb))
+    else:
+        print("Invalid.")
+    wait()
+
+def binomial_theorem():
+    clear_screen()
+    print("BINOMIAL THEOREM")
+    print("Find specific term in (a+b)^n")
+    a = get_float("a = ")
+    b = get_float("b = ")
+    n = get_int("n = ")
+    k = get_int("k (0-indexed term number) = ")
+    if k < 0 or k > n:
+        print("Invalid k.")
+    else:
+        comb = 1
+        for i in range(1, k+1):
+            comb = comb * (n - i + 1) // i
+        coeff = comb * (a ** (n-k)) * (b ** k)
+        print("Term T_{} = {} * a^{} * b^{} = {}".format(k+1, comb, n-k, k, coeff))
+    wait()
+
+def matrices():
+    clear_screen()
+    print("MATRICES (2x2)")
+    print("1. Determinant")
+    print("2. Inverse")
+    print("3. Solve system using matrices")
+    ch = input("Choice: ")
+    if ch == "1":
+        a11 = get_float("a11 = "); a12 = get_float("a12 = ")
+        a21 = get_float("a21 = "); a22 = get_float("a22 = ")
+        det = a11*a22 - a12*a21
+        print("Determinant = {}".format(det))
+    elif ch == "2":
+        a11 = get_float("a11 = "); a12 = get_float("a12 = ")
+        a21 = get_float("a21 = "); a22 = get_float("a22 = ")
+        det = a11*a22 - a12*a21
+        if det == 0:
+            print("No inverse (det=0).")
+        else:
+            print("Inverse:")
+            print("[ {}, {} ]".format(a22/det, -a12/det))
+            print("[ {}, {} ]".format(-a21/det, a11/det))
+    elif ch == "3":
+        a11 = get_float("a11 = "); a12 = get_float("a12 = "); b1 = get_float("b1 = ")
+        a21 = get_float("a21 = "); a22 = get_float("a22 = "); b2 = get_float("b2 = ")
+        det = a11*a22 - a12*a21
+        if det == 0:
+            print("No unique solution.")
+        else:
+            x = (b1*a22 - b2*a12) / det
+            y = (a11*b2 - a21*b1) / det
+            print("Solution: x = {}, y = {}".format(x, y))
+    else:
+        print("Invalid.")
+    wait()
+
+def vectors():
+    clear_screen()
+    print("VECTORS")
+    print("1. Magnitude")
+    print("2. Dot product")
+    print("3. Angle between")
+    ch = input("Choice: ")
+    x1 = get_float("x1 = "); y1 = get_float("y1 = ")
+    if ch == "1":
+        mag = math.sqrt(x1**2 + y1**2)
+        print("Magnitude = {}".format(mag))
+    else:
+        x2 = get_float("x2 = "); y2 = get_float("y2 = ")
+        if ch == "2":
+            dot = x1*x2 + y1*y2
+            print("Dot product = {}".format(dot))
+        elif ch == "3":
+            dot = x1*x2 + y1*y2
+            mag1 = math.sqrt(x1**2 + y1**2)
+            mag2 = math.sqrt(x2**2 + y2**2)
+            if mag1 == 0 or mag2 == 0:
+                print("Zero vector, angle undefined.")
+            else:
+                cos_theta = dot / (mag1 * mag2)
+                if cos_theta > 1: cos_theta = 1
+                if cos_theta < -1: cos_theta = -1
+                theta = math.degrees(math.acos(cos_theta))
+                print("Angle = {} degrees".format(theta))
+        else:
+            print("Invalid.")
+    wait()
+
+def law_of_sines_cosines():
+    clear_screen()
+    print("LAW OF SINES / COSINES")
+    print("1. Law of Sines (AAS/ASA)")
+    print("2. Law of Cosines (SAS/SSS)")
+    ch = input("Choice: ")
+    if ch == "1":
+        A = get_float("angle A (deg) = ")
+        B = get_float("angle B (deg) = ")
+        a = get_float("side a opposite A = ")
+        b = a * math.sin(math.radians(B)) / math.sin(math.radians(A))
+        print("Side b (opposite B) = {}".format(b))
+    elif ch == "2":
+        print("Which case?")
+        print("1. SAS (two sides and included angle)")
+        print("2. SSS (three sides to find angle)")
+        sub = input("Choice: ")
+        if sub == "1":
+            a = get_float("side a = ")
+            b = get_float("side b = ")
+            C = get_float("included angle C (deg) = ")
+            c = math.sqrt(a**2 + b**2 - 2*a*b*math.cos(math.radians(C)))
+            print("Side c = {}".format(c))
+        elif sub == "2":
+            a = get_float("side a = ")
+            b = get_float("side b = ")
+            c = get_float("side c = ")
+            cosA = (b**2 + c**2 - a**2) / (2*b*c)
+            if cosA > 1 or cosA < -1:
+                print("Invalid triangle sides.")
+            else:
+                A = math.degrees(math.acos(cosA))
+                print("Angle A = {} degrees".format(A))
+        else:
+            print("Invalid.")
+    else:
+        print("Invalid.")
+    wait()
+
+def herons_formula():
+    clear_screen()
+    print("HERON'S FORMULA (Triangle area given 3 sides)")
+    a = get_float("side a = ")
+    b = get_float("side b = ")
+    c = get_float("side c = ")
+    s = (a + b + c) / 2
+    area = math.sqrt(s * (s-a) * (s-b) * (s-c))
+    print("Area = {}".format(area))
+    wait()
+
+def three_d_distance():
+    clear_screen()
+    print("3D DISTANCE")
+    x1 = get_float("x1 = "); y1 = get_float("y1 = "); z1 = get_float("z1 = ")
+    x2 = get_float("x2 = "); y2 = get_float("y2 = "); z2 = get_float("z2 = ")
+    dist = math.sqrt((x2-x1)**2 + (y2-y1)**2 + (z2-z1)**2)
+    print("Distance = {}".format(dist))
+    wait()
+
+def quadratic_inequality():
+    clear_screen()
+    print("QUADRATIC INEQUALITY (ax^2+bx+c > 0, etc.)")
+    a = get_nonzero_float("a = ")
+    b = get_float("b = ")
+    c = get_float("c = ")
+    op = input("Operator (<, >, <=, >=): ").strip()
+    disc = b*b - 4*a*c
+    print("Discriminant = {}".format(disc))
+    if disc < 0:
+        if a > 0:
+            truth = True if op in [">", ">="] else False
+        else:
+            truth = True if op in ["<", "<="] else False
+        if truth:
+            print("All real x are solutions.")
+        else:
+            print("No solution.")
+    elif disc == 0:
+        root = -b/(2*a)
+        print("Double root at x = {}".format(root))
+        if a > 0:
+            if op == ">":
+                print("Solution: all x except x = {}".format(root))
+            elif op == ">=":
+                print("Solution: all real x")
+            elif op == "<":
+                print("No solution (expression never negative)")
+            else:  # op == "<="
+                print("Solution: x = {} (only point where expression is zero)".format(root))
+        else:  # a < 0
+            if op == "<":
+                print("Solution: all x except x = {}".format(root))
+            elif op == "<=":
+                print("Solution: all real x")
+            elif op == ">":
+                print("No solution (expression never positive)")
+            else:  # op == ">="
+                print("Solution: x = {} (only point where expression is zero)".format(root))
+    else:
+        sq = math.sqrt(disc)
+        r1 = (-b - sq)/(2*a)
+        r2 = (-b + sq)/(2*a)
+        if r1 > r2:
+            r1, r2 = r2, r1
+        print("Roots: {} and {}".format(r1, r2))
+        if a > 0:
+            if op in [">", ">="]:
+                print("Solution: x < {} or x > {}".format(r1, r2))
+            else:
+                print("Solution: {} < x < {}".format(r1, r2))
+        else:
+            if op in [">", ">="]:
+                print("Solution: {} < x < {}".format(r1, r2))
+            else:
+                print("Solution: x < {} or x > {}".format(r1, r2))
+    wait()
+
+def absolute_value_inequality():
+    clear_screen()
+    print("ABSOLUTE VALUE INEQUALITY: |ax+b| < c  (or >, <=, >=)")
+    a = get_float("a = "); b = get_float("b = "); c = get_float("c = ")
+    op = input("Operator (<, >, <=, >=): ").strip()
+    if c < 0:
+        if op in [">", ">="]:
+            print("All real x are solutions (abs always >=0 > negative).")
+        else:
+            print("No solution (abs cannot be < negative).")
+    elif c == 0:
+        if op in ["<", "<="]:
+            x = -b/a
+            print("Only solution x = {} (since |...|<=0 implies ...=0)".format(x))
+        else:
+            x = -b/a
+            if op == ">":
+                print("All x except x = {}".format(x))
+            else:
+                print("All real x are solutions.")
+    else:
+        if op in ["<", "<="]:
+            low = (-c - b)/a
+            high = (c - b)/a
+            if a < 0:
+                low, high = high, low
+            print("Solution: {} < x < {}".format(low, high))
+        else:
+            left = (-c - b)/a
+            right = (c - b)/a
+            if a < 0:
+                left, right = right, left
+            print("Solution: x < {} or x > {}".format(left, right))
+    wait()
+
+def radian_degree():
+    clear_screen()
+    print("RADIAN <-> DEGREE CONVERTER")
+    print("1. Radians to Degrees")
+    print("2. Degrees to Radians")
+    ch = input("Choice: ")
+    if ch == "1":
+        rad = get_float("radians = ")
+        deg = rad * 180 / math.pi
+        print("{} rad = {} degrees".format(rad, deg))
+    elif ch == "2":
+        deg = get_float("degrees = ")
+        rad = deg * math.pi / 180
+        print("{} deg = {} rad".format(deg, rad))
+    else:
+        print("Invalid.")
+    wait()
+
+def polynomial_long_division():
+    clear_screen()
+    print("POLYNOMIAL LONG DIVISION (linear divisor only)")
+    print("Divide polynomial P(x) by (x - c) using synthetic division.")
+    c = get_float("c (divisor x-c): ")
+    print("Enter coefficients of P(x) from highest degree to constant, separated by spaces:")
+    coeff_str = input("> ")
+    try:
+        coeff = [float(x) for x in coeff_str.split()]
+    except:
+        print("Invalid coefficients.")
+        wait(); return
+    if len(coeff) < 2:
+        print("Need at least 2 coefficients.")
+        wait(); return
+    result = [coeff[0]]
+    for i in range(1, len(coeff)-1):
+        val = result[-1] * c + coeff[i]
+        result.append(val)
+    remainder = result[-1] * c + coeff[-1]
+    print("Quotient coefficients (degree {} to 0):".format(len(result)-1))
+    print(result)
+    print("Remainder: {}".format(remainder))
+    wait()
+
+def remainder_theorem():
+    clear_screen()
+    print("REMAINDER THEOREM")
+    print("Evaluates P(c) using synthetic substitution.")
+    c = get_float("c = ")
+    coeff_str = input("Enter polynomial coefficients (high to low) separated by spaces: ")
+    try:
+        coeff = [float(x) for x in coeff_str.split()]
+    except:
+        print("Invalid."); wait(); return
+    val = coeff[0]
+    for co in coeff[1:]:
+        val = val * c + co
+    print("P({}) = {}".format(c, val))
+    wait()
+
+def completing_square():
+    clear_screen()
+    print("COMPLETING THE SQUARE: x^2 + bx + c = (x + p)^2 + q")
+    b = get_float("b (coefficient of x) = ")
+    c = get_float("c (constant) = ")
+    p = b / 2
+    q = c - p**2
+    print("Result: (x + {})^2 + {}".format(p, q))
+    wait()
+
+# ------------------------------------------------------------
+#  ADDITIONAL TOPICS MENU (new)
+# ------------------------------------------------------------
+def additional_topics_menu():
+    while True:
+        clear_screen()
+        print("ADDITIONAL TOPICS")
+        print("1. Logarithms & Exponential Equations")
+        print("2. Sequences & Series")
+        print("3. Complex Numbers")
+        print("4. Counting & Probability (advanced)")
+        print("5. Binomial Theorem")
+        print("6. Matrices & Vectors")
+        print("7. Law of Sines / Cosines")
+        print("8. Heron's Formula")
+        print("9. 3D Distance")
+        print("10. Quadratic Inequality")
+        print("11. Absolute Value Inequality")
+        print("12. Radian/Degree Converter")
+        print("13. Polynomial Long Division")
+        print("14. Remainder Theorem")
+        print("15. Completing the Square")
+        print("16. Function Guides (transforms, inverse, etc.)")
+        print("17. Advanced Word Problems (work, mixture, distance)")
+        print("18. Geometry Guides (circle theorems, unit circle)")
+        print("19. Conic Sections Guide")
+        print("20. Even/Odd, Domain/Range, Composition")
+        print("21. Return to Main Menu")
+        ch = input("Choice: ")
+        if ch == "1":
+            sub_menu_log_exp()
+        elif ch == "2":
+            sequences_series()
+        elif ch == "3":
+            complex_numbers()
+        elif ch == "4":
+            combinatorics()
+        elif ch == "5":
+            binomial_theorem()
+        elif ch == "6":
+            sub_menu_mat_vec()
+        elif ch == "7":
+            law_of_sines_cosines()
+        elif ch == "8":
+            herons_formula()
+        elif ch == "9":
+            three_d_distance()
+        elif ch == "10":
+            quadratic_inequality()
+        elif ch == "11":
+            absolute_value_inequality()
+        elif ch == "12":
+            radian_degree()
+        elif ch == "13":
+            polynomial_long_division()
+        elif ch == "14":
+            remainder_theorem()
+        elif ch == "15":
+            completing_square()
+        elif ch == "16":
+            function_guides_menu()
+        elif ch == "17":
+            word_problem_guides_menu()
+        elif ch == "18":
+            geometry_guides_menu()
+        elif ch == "19":
+            guide_conic_sections()
+        elif ch == "20":
+            misc_function_guides_menu()
+        elif ch == "21":
+            break
+        else:
+            input("Invalid. Press Enter.")
+
+def sub_menu_log_exp():
+    clear_screen()
+    print("1. Logarithm evaluation/solving")
+    print("2. Exponential equations")
+    ch = input("Choice: ")
+    if ch == "1":
+        logarithms()
+    elif ch == "2":
+        exponential_equations()
+    else:
+        print("Invalid.")
+    wait()
+
+def sub_menu_mat_vec():
+    clear_screen()
+    print("1. Matrices")
+    print("2. Vectors")
+    ch = input("Choice: ")
+    if ch == "1":
+        matrices()
+    elif ch == "2":
+        vectors()
+    else:
+        print("Invalid.")
+    wait()
+
+def function_guides_menu():
+    clear_screen()
+    print("1. Function Transformations")
+    print("2. Inverse Functions")
+    print("3. Piecewise Functions")
+    ch = input("Choice: ")
+    if ch == "1": guide_function_transformations()
+    elif ch == "2": guide_inverse_functions()
+    elif ch == "3": guide_piecewise_functions()
+    else: print("Invalid.")
+    wait()
+
+def word_problem_guides_menu():
+    clear_screen()
+    print("1. Work / Rate Problems")
+    print("2. Mixture Problems")
+    print("3. Advanced Distance/Rate/Time")
+    ch = input("Choice: ")
+    if ch == "1": guide_work_rate_problems()
+    elif ch == "2": guide_mixture_problems()
+    elif ch == "3": guide_distance_rate_time_advanced()
+    else: print("Invalid.")
+    wait()
+
+def geometry_guides_menu():
+    clear_screen()
+    print("1. Circle Theorems")
+    print("2. Unit Circle & Exact Values")
+    ch = input("Choice: ")
+    if ch == "1": guide_circle_theorems()
+    elif ch == "2": guide_unit_circle()
+    else: print("Invalid.")
+    wait()
+
+def misc_function_guides_menu():
+    clear_screen()
+    print("1. Even & Odd Functions")
+    print("2. Domain & Range")
+    print("3. Function Composition")
+    ch = input("Choice: ")
+    if ch == "1": guide_even_odd_functions()
+    elif ch == "2": guide_domain_range()
+    elif ch == "3": guide_function_composition()
+    else: print("Invalid.")
+    wait()
+
+# ------------------------------------------------------------
+#  MAIN MENU (updated)
+# ------------------------------------------------------------
 def main_menu():
     while True:
         clear_screen()
@@ -351,24 +1131,40 @@ def main_menu():
         print("2. Advanced Math")
         print("3. Problem Solving & Data Analysis")
         print("4. Geometry & Trigonometry")
-        print("5. Universal Equation Solver")
-        print("6. Formula Reference")
-        print("7. Calculator Utilities")
-        print("8. About")
-        print("9. Exit")
+        print("5. Additional Topics (NEW!)")
+        print("6. Universal Equation Solver")
+        print("7. Formula Reference")
+        print("8. Calculator Utilities")
+        print("9. About")
+        print("10. Exit")
         choice = input("Enter choice: ")
-        if choice == "1":   heart_of_algebra_menu()
-        elif choice == "2": advanced_math_menu()
-        elif choice == "3": problem_solving_menu()
-        elif choice == "4": geometry_trig_menu()
-        elif choice == "5": universal_equation_solver()
-        elif choice == "6": formula_reference()
-        elif choice == "7": utilities_menu()
-        elif choice == "8": about()
+        if choice == "1":
+            heart_of_algebra_menu()
+        elif choice == "2":
+            advanced_math_menu()
+        elif choice == "3":
+            problem_solving_menu()
+        elif choice == "4":
+            geometry_trig_menu()
+        elif choice == "5":
+            additional_topics_menu()
+        elif choice == "6":
+            universal_equation_solver()
+        elif choice == "7":
+            formula_reference()
+        elif choice == "8":
+            utilities_menu()
         elif choice == "9":
-            print("Goodbye!"); break
-        else: input("Invalid choice. Press Enter.")
+            about()
+        elif choice == "10":
+            print("Goodbye!")
+            break
+        else:
+            input("Invalid choice. Press Enter.")
 
+# ================================================================
+#  SOLVERS FROM 1.0 (Heart of Algebra, Advanced Math, etc.)
+# ================================================================
 def heart_of_algebra_menu():
     while True:
         clear_screen()
@@ -494,9 +1290,6 @@ def utilities_menu():
         elif ch == "11": break
         else: input("Invalid. Press Enter.")
 
-# ------------------------------------------------------------
-#  ALL SOLVERS 
-# ------------------------------------------------------------
 def solve_linear_one_var():
     clear_screen()
     print("Solve: ax + b = cx + d")
@@ -525,8 +1318,7 @@ def solve_slope_intercepts():
     print("2. From slope-intercept form (y = mx + b)")
     ch = input("Choice: ")
     if ch == "1":
-        x1 = get_float("x1 = "); y1 = get_float("y1 = ")
-        x2 = get_float("x2 = "); y2 = get_float("y2 = ")
+        x1 = get_float("x1 = "); y1 = get_float("y1 = "); x2 = get_float("x2 = "); y2 = get_float("y2 = ")
         if x2 - x1 == 0:
             print("Vertical line (undefined slope). x-intercept = {}".format(x1))
             wait(); return
@@ -547,8 +1339,7 @@ def solve_slope_intercepts():
         else:
             print("Horizontal line (m=0).")
         print("y-intercept: (0, {})".format(b))
-    else:
-        print("Invalid.")
+    else: print("Invalid.")
     wait()
 
 def solve_linear_system():
@@ -629,8 +1420,7 @@ def simplify_expression():
     print("2. Factor x^2 + px + q")
     ch = input("Choice: ")
     if ch == "1":
-        a = get_float("a = "); b = get_float("b = ")
-        c = get_float("c = "); d = get_float("d = ")
+        a = get_float("a = "); b = get_float("b = "); c = get_float("c = "); d = get_float("d = ")
         ac = a*c; ad_bc = a*d + b*c; bd = b*d
         print("\nExpanded: ({}x+{})({}x+{}) = {}x^2 + {}x + {}".format(a, b, c, d, ac, ad_bc, bd))
     elif ch == "2":
@@ -1424,14 +2214,27 @@ def pythagorean_calc():
 
 def about():
     clear_screen()
-    print("SAT Math Solver for HP Prime G2")
-    print("Complete Digital SAT Math coverage.")
-    print("Version 1.0 - MicroPython")
-    print("Includes text guides for all SAT topics.")
+    print("="*30)
+    print("  SAT Math Solver for HP Prime G2")
+    print("="*30)
+    print("Covers EVERY Digital SAT Math topic.")
+    print("")
+    print("Features:")
+    print("- Step-by-step solvers")
+    print("- Universal equation solver")
+    print("- Built-in formula reference")
+    print("- Text guides for conceptual topics")
+    print("- 60+ solvers & utilities")
+    print("")
+    print("Version: 1.1 (MicroPython)")
+    print("License: GPL 3.0")
+    print("Author: cheeseburgerjr")
+    print("")
+    print("Made for students, by a student.")
     wait()
 
-# ------------------------------------------------------------
+# ================================================================
 #  RUN
-# ------------------------------------------------------------
+# ================================================================
 if __name__ == "__main__":
     main_menu()
