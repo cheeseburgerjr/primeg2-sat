@@ -14,10 +14,15 @@ maybe... we will see
  
 any issues please reach out
 
-# installation
+# installation (for hp prime)
 1. install hp connectivity kit
 2. locate your calculator
 3. click application libary
 4. click python
 5. right click files, then add file, then this program
 6. start the program like you normally would on python (i use the shell)
+
+# installation on any device
+1. must have a terminal with python already installed
+2. download sat.py
+3. python /the/path/to/sat.py
