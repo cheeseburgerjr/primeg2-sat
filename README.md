@@ -15,8 +15,8 @@ simply because it has better hardware
 maybe... we will see
 
 # installation (for hp prime)
-1. install hp connectivity kit
-2. locate your calculator
+1. install hp connectivity kit, and the hp prime virtual calculator (unless you already got one)
+2. locate your calculator, then double click
 3. click application libary
 4. click python
 5. right click files, then add file, then this program
