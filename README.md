@@ -3,16 +3,16 @@ this is my first repo, i wanted to make a system that allowed taking the sat a b
 
 this is portable, meaning any device that has python and a terminal can run it
 
-i have been using the hp prime virtual calculator to test this, so your handheld prime g2 calculator may experience bugs
+i have been using the hp prime virtual calculator to test this, so your handheld prime g2 calculator or any python capable graphing calculator may experience bugs
 if youre on the shell, use this command: || exec(open("sat.py").read()) || i couldnt execute it properly so your millage may vary
+
+any issues please reach out
 
 # why the prime g2?
 simply because it has better hardware
 
 # will you make a ti version?
 maybe... we will see
- 
-any issues please reach out
 
 # installation (for hp prime)
 1. install hp connectivity kit
