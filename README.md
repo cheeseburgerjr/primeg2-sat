@@ -6,7 +6,7 @@ this is my first repository. i wanted to make a program that makes solving and u
 
 this is a portable sat math solver, built for graphing calculators and their official emulators. running it on a regular pc with python is possible **only** inside a sandbox, virtual machine, or calculator emulator — never in your main terminal.
 
-i have been using the hp prime virtual calculator to test this. the physical hp prime g2 should work the same, but other python‑capable graphing calculators (ti‑84 evo, numworks, casio fx‑cg50) may run into small quirks because i haven't tested them personally. please let me know if you find any.
+i have been using the hp prime virtual calculator to test this. the physical hp prime g2 should work the same, but other python‑capable graphing calculators (ti‑84 evo, numworks, casio fx‑cg50) may run into small quirks because i haven't tested them personally. please let me know if you find any issues.
 
 ## launching on the hp prime (virtual or physical)
 
