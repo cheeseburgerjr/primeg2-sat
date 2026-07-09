@@ -39,7 +39,7 @@ maybe... we will see.
 6. start the program using the command above or your preferred method
 
 ## installation (linux)
-sorry linux users (including me, i use cachy btw), there is no official hp prime virtual calculator for linux, but you can still run the sat solver in the terminal safely.
+> sorry linux users (including me, i use cachy btw), there is no official hp prime virtual calculator for linux, but you can still run the sat solver in the terminal safely.
 
 1. install micropython from your package manager:
    - ubuntu/debian: `sudo apt install micropython`
@@ -47,6 +47,9 @@ sorry linux users (including me, i use cachy btw), there is no official hp prime
    - arch/manjaro: `sudo pacman -S micropython`
 2. open your file manager and navigate to where `sat.py` is saved, and use the full path
 3. run: micropython /path/of/sat.py *(replace `/path/of/` with the real location)* or if you're comfortable, `cd` into where `sat.py` is saved, then run: micropython `sat.py`
+
+> micropython provides a calculator‑like python environment. this keeps the
+> equation solver safe — never use a regular `python` command for this.
 
 ## a huge safety note
 
