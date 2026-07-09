@@ -40,7 +40,7 @@ maybe... we will see.
 
 ## a huge safety note
 
-the universal equation solver uses a restricted `eval()` that is safe inside a calculator's locked‑down python environment. on a regular computer, a malicious input could potentially escape the whitelist. **do not run this script in a standard python terminal on your desktop.** if you really must run it outside a calculator, use an official emulator (like the hp prime virtual calculator), a sandbox, or a micropython environment that mimics a calculator. always be careful, and you better know what you're doing. :)
+the universal equation solver uses a restricted `eval()` that is safe inside a calculator's locked‑down python environment. on a regular computer, a malicious input could potentially escape the whitelist. **do not run this script in a standard python terminal on your desktop.** if you really must run it outside a calculator, use an official emulator (like the hp prime virtual calculator), a sandbox, or a micropython environment that mimics a calculator.
 
 ## license (gnu gpl 3.0)
 
