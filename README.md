@@ -15,8 +15,7 @@ exec(open("sat.py").read())
 
 ## what's inside
 
-- step‑by‑step solvers for over 80 sat math topics
-- a universal equation solver — just type the equation (e.g., `2x+5=17`)
+- step‑by‑step solvers for over 60 sat math topics
 - a built‑in sat formula reference with examples
 - text guides for tricky conceptual topics like surveys, data visualization, circle theorems, and more
 - calculator utilities like fraction simplifier, gcf, prime factorization, and others
@@ -41,19 +40,12 @@ maybe... we will see.
 ## installation (linux)
 > sorry linux users (including me, i use cachy btw), there is no official hp prime virtual calculator for linux, but you can still run the sat solver in the terminal safely.
 
-1. install micropython from your package manager:
-   - ubuntu/debian: `sudo apt install micropython`
-   - fedora: `sudo dnf install micropython`
-   - arch: install from your perfered AUR helper `paru/yay -S micropython`
+1. install python from your package manager:
+   - ubuntu/debian: `sudo apt install python`
+   - fedora: `sudo dnf install python`
+   - arch: `sudo pacman -S python`
 2. open your file manager and navigate to where `sat.py` is saved, and use the full path
-3. run: micropython /path/of/sat.py *(replace `/path/of/` with the real location)* or if you're comfortable, `cd` into where `sat.py` is saved, then run: micropython `sat.py`
-
-> micropython provides a calculator‑like python environment. this keeps the
-> equation solver safe — never use a regular `python` command for this.
-
-## a huge safety note
-
-the universal equation solver uses a restricted `eval()` that is safe inside a calculator's locked‑down python environment. on a regular computer, a malicious input could potentially escape the whitelist. **do not run this script in a standard python terminal on your desktop.** if you really must run it outside a calculator, use an official emulator (like the hp prime virtual calculator), a sandbox, or a micropython environment that mimics a calculator.
+3. run: python /path/of/sat.py *(replace `/path/of/` with the real location)* or if you're comfortable, `cd` into where `sat.py` is saved, then run: python `sat.py`
 
 ## license (gnu gpl 3.0)
 
