@@ -44,7 +44,7 @@ maybe... we will see.
 1. install micropython from your package manager:
    - ubuntu/debian: `sudo apt install micropython`
    - fedora: `sudo dnf install micropython`
-   - arch/manjaro: `sudo pacman -S micropython`
+   - arch: install from your perfered AUR helper `paru/yay -S micropython`
 2. open your file manager and navigate to where `sat.py` is saved, and use the full path
 3. run: micropython /path/of/sat.py *(replace `/path/of/` with the real location)* or if you're comfortable, `cd` into where `sat.py` is saved, then run: micropython `sat.py`
 
