@@ -29,14 +29,24 @@ simply because it has better hardware.
 
 maybe... we will see.
 
-## installation (for hp prime)
+## installation (windows) (mac not tested, should work)
 
 1. install the hp connectivity kit and the hp prime virtual calculator (unless you already have one)
-2. locate your calculator, then double click
+2. open connectivity kit, locate your calculator, then double click
 3. click application library
 4. click python
 5. right‑click files, then add file, then add this program
 6. start the program using the command above or your preferred method
+
+## installation (linux)
+sorry linux users (including me, i use cachy btw), there is no official hp prime virtual calculator for linux, but you can still run the sat solver in the terminal safely.
+
+1. install micropython from your package manager:
+   - ubuntu/debian: `sudo apt install micropython`
+   - fedora: `sudo dnf install micropython`
+   - arch/manjaro: `sudo pacman -S micropython`
+2. open your file manager and navigate to where `sat.py` is saved, and use the full path
+3. run: micropython /path/of/sat.py *(replace `/path/of/` with the real location)* or if you're comfortable, `cd` into where `sat.py` is saved, then run: micropython `sat.py`
 
 ## a huge safety note
 
