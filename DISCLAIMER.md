@@ -11,22 +11,6 @@ this sat math solver is an educational study tool, not a way to cheat.
 
 ---
 
-## don't run this on a regular computer
-
-this software was built just for **graphing calculators and their official emulators**.
-running it on a pc or mac with a full python interpreter is a bad idea, mainly because of:
-
-**security** — the universal equation solver uses a locked‑down `eval()` that’s safe on a calculator. on a desktop, a sneaky input could break out of the whitelist and run nasty code.
-
-**safe ways to run it:**
-- on an actual hp prime g2 (or any supported calculator)
-- on the official **hp prime virtual calculator** emulator (windows/macos)
-- in a **micropython emulator** that acts like a calculator
-
-*seriously, just don't run it in a regular python terminal unless you’re in a sandbox.*
-
----
-
 ## always be careful
 
 always run code with the highest caution. you better know what you’re doing. :)
