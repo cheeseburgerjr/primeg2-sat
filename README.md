@@ -10,8 +10,8 @@ i have been using the hp prime virtual calculator to test this. the physical hp 
 
 ## launching on the hp prime (virtual or physical)
 
-shift + program
-SAT
+shift + program,
+click SAT
 
 ## what's inside
 
