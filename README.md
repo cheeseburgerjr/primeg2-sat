@@ -24,10 +24,6 @@ click SAT
 
 simply because it has better hardware.
 
-## will you make a ti version?
-
-maybe... we will see.
-
 ## installation (windows) (mac not tested, should work)
 
 1. install the hp connectivity kit and the hp prime virtual calculator (unless you already have one)
@@ -37,18 +33,10 @@ maybe... we will see.
 5. right‑click files, then add file, then add this program
 6. scroll down to programs
 7. right click, name it "SAT"
-8. paste this script:
-###
-#PYTHON launcher
-exec(open("sat.py").read())
-#END
+8. type this script in:
+<img width="242" height="167" alt="script" src="https://github.com/user-attachments/assets/3e33dcec-d2c2-483e-9bef-8257cd6c0b6d" />
 
-EXPORT SAT()
-BEGIN
-  PYTHON(launcher);
-END;   
-###
-9. make sure to save everything to calculator
+9. exit, and make sure to save everything to calculator
 
 ## installation (linux)
 > sorry linux users (including me, i use cachy btw), there is no official hp prime virtual calculator for linux, but you can still run the sat solver in the terminal safely.
