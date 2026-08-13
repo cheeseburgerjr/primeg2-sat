@@ -10,8 +10,8 @@ i have been using the hp prime virtual calculator to test this. the physical hp 
 
 ## launching on the hp prime (virtual or physical)
 
-in the python numeric view, use this command:
-exec(open("sat.py").read())
+shift + program
+SAT
 
 ## what's inside
 
@@ -35,7 +35,20 @@ maybe... we will see.
 3. click application library
 4. click python
 5. right‑click files, then add file, then add this program
-6. start the program using the command above or your preferred method
+6. scroll down to programs
+7. right click, name it "SAT"
+8. paste this script:
+###
+#PYTHON launcher
+exec(open("sat.py").read())
+#END
+
+EXPORT SAT()
+BEGIN
+  PYTHON(launcher);
+END;   
+###
+9. make sure to save everything to calculator
 
 ## installation (linux)
 > sorry linux users (including me, i use cachy btw), there is no official hp prime virtual calculator for linux, but you can still run the sat solver in the terminal safely.
