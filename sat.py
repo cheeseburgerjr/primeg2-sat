@@ -6,7 +6,6 @@ Covers all Digital SAT Math topics.
 """
 
 import math
-import re
 
 
 def is_finite_number(x):
@@ -19,6 +18,37 @@ def is_finite_number(x):
             return True
 
 
+def _insert_pi_multiplication(s):
+    out = []
+    i = 0
+    n = len(s)
+    while i < n:
+        c = s[i]
+        if c.isdigit():
+            out.append(c)
+            i += 1
+            j = i
+            while j < n and s[j] == ' ':
+                j += 1
+            if j + 1 < n and s[j:j+2] == 'pi':
+                out.append('*')
+                i = j
+            continue
+        if i + 1 < n and s[i:i+2] == 'pi':
+            out.append('pi')
+            i += 2
+            j = i
+            while j < n and s[j] == ' ':
+                j += 1
+            if j < n and s[j].isdigit():
+                out.append('*')
+                i = j
+            continue
+        out.append(c)
+        i += 1
+    return ''.join(out)
+
+
 def parse_number(s):
     s = s.strip()
     if not s:
@@ -28,8 +58,7 @@ def parse_number(s):
 
     if 'pi' in s.lower():
         s = s.lower()
-        s = re.sub(r'(\d)\s*pi', r'\1*pi', s)
-        s = re.sub(r'pi\s*(\d)', r'pi*\1', s)
+        s = _insert_pi_multiplication(s)
         s = s.replace('pi', str(math.pi))
         if not all(c in '0123456789.*/+- ()' for c in s):
             raise ValueError("invalid pi expression")
@@ -46,19 +75,28 @@ def parse_number(s):
         if len(parts) == 2:
             try:
                 whole = float(parts[0])
-                frac = parse_number(parts[1])
-                if whole < 0:
-                    return whole - abs(frac)
-                else:
-                    return whole + frac
             except Exception:
-                pass
+                whole = None
+            if whole is not None:
+                try:
+                    frac = parse_number(parts[1])
+                except Exception:
+                    frac = None
+                if frac is not None:
+                    if frac < 0:
+                        raise ValueError("negative fractional part in mixed number is not allowed")
+                    if whole < 0:
+                        return whole - frac
+                    return whole + frac
 
     if '/' in s:
         parts = s.split('/')
         if len(parts) == 2:
-            num = float(parts[0])
-            den = float(parts[1])
+            try:
+                num = float(parts[0])
+                den = float(parts[1])
+            except Exception:
+                raise ValueError("invalid fraction")
             if den == 0:
                 raise ValueError("division by zero")
             return num / den
@@ -195,7 +233,7 @@ class UI:
         try:
             input(prompt)
         except (KeyboardInterrupt, EOFError):
-            pass
+            raise SystemExit
 
     @staticmethod
     def get_float(prompt):
@@ -205,7 +243,9 @@ class UI:
                 if not is_finite_number(val):
                     raise ValueError("non-finite")
                 return val
-            except (ValueError, KeyboardInterrupt, EOFError):
+            except (EOFError, KeyboardInterrupt):
+                raise SystemExit
+            except ValueError:
                 print("Invalid number. Enter finite decimals, fractions (22/7), mixed (3 1/2), or pi.")
 
     @staticmethod
@@ -216,7 +256,9 @@ class UI:
                 if val == int(val):
                     return int(val)
                 print("Please enter a whole number.")
-            except (ValueError, KeyboardInterrupt, EOFError):
+            except (EOFError, KeyboardInterrupt):
+                raise SystemExit
+            except ValueError:
                 print("Invalid number. Enter finite decimals, fractions (22/7), mixed (3 1/2), or pi.")
 
     @staticmethod
@@ -262,7 +304,10 @@ class UI:
     @staticmethod
     def get_operator(prompt="Operator (<, >, <=, >=): "):
         while True:
-            op = input(prompt).strip()
+            try:
+                op = input(prompt).strip()
+            except (EOFError, KeyboardInterrupt):
+                raise SystemExit
             if op in {"<", ">", "<=", ">="}:
                 return op
             print("Invalid operator. Enter one of <, >, <=, >=.")
@@ -315,7 +360,10 @@ def search_solver():
         UI.clear()
         print("SEARCH SOLVERS")
         print("Enter a keyword (e.g., 'matrix', 'statistics') or 0 to return to main menu.")
-        keyword = input("Keyword: ").strip().lower()
+        try:
+            keyword = input("Keyword: ").strip().lower()
+        except (EOFError, KeyboardInterrupt):
+            raise SystemExit
         if keyword == "0":
             return
 
@@ -345,7 +393,10 @@ def search_solver():
 
         while True:
             print("\nEnter the ID to select a solver, or 0 to return to main menu.")
-            choice = input("Choice: ").strip()
+            try:
+                choice = input("Choice: ").strip()
+            except (EOFError, KeyboardInterrupt):
+                raise SystemExit
             if choice == "0":
                 return
             try:
@@ -400,7 +451,10 @@ def solve_slope_intercepts():
     print("Find slope / intercepts")
     print("1. From two points")
     print("2. From slope-intercept form (y = mx + b)")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if ch == "1":
         x1 = UI.get_float("x1 = ")
         y1 = UI.get_float("y1 = ")
@@ -561,13 +615,12 @@ def system_inequalities_checker():
         b = UI.get_float("  b (intercept) = ")
         op = UI.get_operator("  Operator (<, >, <=, >=): ")
         inequalities.append((m, b, op))
-        cont = input("Add another inequality? (y/n): ").strip().lower()
+        try:
+            cont = input("Add another inequality? (y/n): ").strip().lower()
+        except (EOFError, KeyboardInterrupt):
+            raise SystemExit
         if cont != 'y':
             break
-    if not inequalities:
-        print("No inequalities entered.")
-        UI.wait()
-        return
 
     x = UI.get_float("Enter x of point: ")
     y = UI.get_float("Enter y of point: ")
@@ -603,7 +656,10 @@ def solve_linear_function():
     print("Linear function: f(x) = mx + b")
     print("1. Evaluate f(x) for a given x")
     print("2. Find x when f(x) is given")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     m = UI.get_float("m = ")
     b = UI.get_float("b = ")
     if ch == "1":
@@ -650,7 +706,10 @@ def parallel_perpendicular_lines():
     print("Given a line y = mx + b, or two points, find slope of parallel/perpendicular line and equation through a point.")
     print("1. From slope-intercept form (y = mx + b)")
     print("2. From two points")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     m = None
     if ch == "1":
         m = UI.get_float("m = ")
@@ -681,7 +740,10 @@ def parallel_perpendicular_lines():
     print("\nFind slope of line that is:")
     print("1. Parallel")
     print("2. Perpendicular")
-    rel = input("Choice: ")
+    try:
+        rel = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
 
     slope_new = None
     if m is None:
@@ -738,7 +800,10 @@ def line_translation_xintercept():
     print("Find the new x-intercept after translating a line.")
     print("1. From two points")
     print("2. From slope (m) and y-intercept (b)")
-    choice = input("Choice: ")
+    try:
+        choice = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if choice == "1":
         x1 = UI.get_float("x1 = ")
         y1 = UI.get_float("y1 = ")
@@ -771,9 +836,15 @@ def line_translation_xintercept():
     print("\nTranslation options:")
     print("1. Vertical (up/down)")
     print("2. Horizontal (left/right)")
-    trans_choice = input("Choice: ")
+    try:
+        trans_choice = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if trans_choice == "1":
-        direction = input("Direction (up/down): ").strip().lower()
+        try:
+            direction = input("Direction (up/down): ").strip().lower()
+        except (EOFError, KeyboardInterrupt):
+            raise SystemExit
         amount = UI.get_float("Amount: ")
         if direction == "up":
             new_b = b + amount
@@ -799,7 +870,10 @@ def line_translation_xintercept():
             steps.append("x-intercept: set y=0 → 0 = {}x + {} → x = {}".format(new_m, new_b, x_int))
             final = "x-intercept = {}".format(x_int)
     elif trans_choice == "2":
-        direction = input("Direction (left/right): ").strip().lower()
+        try:
+            direction = input("Direction (left/right): ").strip().lower()
+        except (EOFError, KeyboardInterrupt):
+            raise SystemExit
         amount = UI.get_float("Amount: ")
         if direction == "right":
             steps.append("Translate right by {}: replace x with (x - {})".format(amount, amount))
@@ -845,7 +919,10 @@ def linear_word_problems():
     print("Translate word problems to linear equations and solve.")
     print("1. Simple linear equation (ax + b = cx + d)")
     print("2. Equation from two points (find slope and intercept)")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if ch == "1":
         solve_linear_one_var()
     elif ch == "2":
@@ -884,7 +961,10 @@ def simplify_expression():
     print("Equivalent Expressions (basic expand/factor)")
     print("1. Expand (ax+b)(cx+d)")
     print("2. Factor x^2 + px + q")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if ch == "1":
         a = UI.get_float("a = ")
         b = UI.get_float("b = ")
@@ -1004,7 +1084,10 @@ def solve_nonlinear_system():
     print("Nonlinear system solver:")
     print("1. Line and Parabola")
     print("2. Line and Circle")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if ch == "1":
         m = UI.get_float("Line slope m = ")
         b_line = UI.get_float("Line intercept b = ")
@@ -1090,7 +1173,10 @@ def exponential_functions():
     print("1. Basic Growth/Decay: y = a * b^x")
     print("2. Compound Interest: A = P(1 + r/n)^(nt)")
     print("3. Half-life / Doubling time")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if ch == "1":
         a = UI.get_float("Initial amount a = ")
         b = UI.get_positive_float("Growth/decay factor b = ")
@@ -1122,7 +1208,10 @@ def exponential_functions():
     elif ch == "3":
         print("1. Half-life (decay)")
         print("2. Doubling time (growth)")
-        sub = input("Choice: ")
+        try:
+            sub = input("Choice: ")
+        except (EOFError, KeyboardInterrupt):
+            raise SystemExit
         if sub == "1":
             init = UI.get_float("Initial amount = ")
             hl = UI.get_positive_float("Half-life = ")
@@ -1164,7 +1253,10 @@ def polynomial_roots():
     print("Polynomial roots")
     print("1. Quadratic (ax^2+bx+c)")
     print("2. Cubic (limited to guess integer root)")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if ch == "1":
         a = UI.get_nonzero_float("a = ")
         b = UI.get_float("b = ")
@@ -1267,11 +1359,17 @@ def rational_functions():
         final = "Linear function: f(x) = {}x + {} (no asymptotes)".format(slope, intercept)
     else:
         vertical = -d / c
-        has_hole = is_approx_zero(a * d - b * c) and a != 0
+        has_hole = is_approx_zero(a * d - b * c)
         if has_hole:
-            steps.append("Numerator and denominator share a factor → removable hole.")
-            steps.append("Hole at x = {} (factor (x + {}))".format(vertical, d / c if c != 0 else 0))
-            final = "Hole at x = {} (no vertical asymptote)".format(vertical)
+            if is_approx_zero(a) and is_approx_zero(b):
+                steps.append("Numerator identically zero → f(x) = 0 for x ≠ {}.".format(vertical))
+                steps.append("Removable hole at x = {} with value 0.".format(vertical))
+                final = "Hole at x = {} (value 0); domain: x ≠ {}; range: {{0}}".format(vertical, vertical)
+            else:
+                hole_val = a / c
+                steps.append("Numerator is a multiple of denominator → removable hole.")
+                steps.append("Hole at x = {} with limit value a/c = {}.".format(vertical, hole_val))
+                final = "Hole at x = {} (value {}); domain: x ≠ {}; range: y ≠ {}".format(vertical, hole_val, vertical, hole_val)
         else:
             steps.append("Vertical asymptote: set denominator = 0 → {}x + {} = 0 → x = {}".format(c, d, vertical))
             if a == 0:
@@ -1350,6 +1448,21 @@ def solve_radical_equation():
         if disc < 0:
             steps.append("No real solutions.")
             final = "No real solutions"
+        elif is_approx_zero(disc):
+            x = -B / (2*A)
+            steps.append("Discriminant = 0 → one double root: x = {}".format(x))
+            if a*x + b >= 0 and c*x + d >= 0:
+                left = math.sqrt(a*x + b)
+                right = c*x + d
+                if is_approx_zero(left - right):
+                    steps.append("Check: √({}) = {} → valid".format(a*x+b, right))
+                    final = "x = {}".format(x)
+                else:
+                    steps.append("Check: √({}) = {} ≠ {} → extraneous".format(a*x+b, left, right))
+                    final = "No valid solution (extraneous)"
+            else:
+                steps.append("Domain error: {}x+{} or {}x+{} negative".format(a, b, c, d))
+                final = "No valid solution"
         else:
             sq = math.sqrt(disc)
             x1 = (-B + sq)/(2*A)
@@ -1558,7 +1671,7 @@ def absolute_value_inequality():
         print("Final answer: {}".format(final))
     elif c == 0:
         x = -b/a
-        if op in ("<",):
+        if op == "<":
             steps.append("|{}x+{}| < 0 has no solution.".format(a, b))
             final = "No solution"
         elif op == "<=":
@@ -1609,7 +1722,10 @@ def polynomial_long_division():
     print("Divide polynomial P(x) by (x - c) using synthetic division.")
     c = UI.get_float("c (divisor x-c): ")
     print("Enter coefficients of P(x) from highest degree to constant, separated by spaces:")
-    coeff_str = input("> ")
+    try:
+        coeff_str = input("> ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     try:
         coeff = [parse_number(x) for x in coeff_str.split()]
     except Exception:
@@ -1669,7 +1785,10 @@ def remainder_theorem():
     print("REMAINDER THEOREM")
     print("Evaluates P(c) using synthetic substitution.")
     c = UI.get_float("c = ")
-    coeff_str = input("Enter polynomial coefficients (high to low) separated by spaces: ").strip()
+    try:
+        coeff_str = input("Enter polynomial coefficients (high to low) separated by spaces: ").strip()
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if not coeff_str:
         print("No coefficients entered.")
         UI.wait()
@@ -1731,7 +1850,10 @@ def function_transformations():
     print("3. |x|")
     print("4. sqrt(x)")
     print("5. 1/x")
-    parent_choice = input("Choice: ")
+    try:
+        parent_choice = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     parent_map = {"1": "x^2", "2": "x^3", "3": "|x|", "4": "sqrt(x)", "5": "1/x"}
     parent = parent_map.get(parent_choice, "x^2")
     steps = []
@@ -1741,7 +1863,10 @@ def function_transformations():
     print("Enter transformations (one per line), empty line to finish.")
     print("Options: left/right/up/down <value>, stretch <factor>, compress <factor>, reflect x, reflect y")
     while True:
-        t = input("> ").strip()
+        try:
+            t = input("> ").strip()
+        except (EOFError, KeyboardInterrupt):
+            raise SystemExit
         if not t:
             break
         transforms.append(t)
@@ -1841,10 +1966,16 @@ def piecewise_evaluator():
     print("Enter pieces one by one. Each piece: condition (e.g., x < 2) and expression (e.g., x^2).")
     print("Use 'x' as the variable. Empty line to finish.")
     while True:
-        cond = input("Condition (or blank to finish): ").strip()
+        try:
+            cond = input("Condition (or blank to finish): ").strip()
+        except (EOFError, KeyboardInterrupt):
+            raise SystemExit
         if not cond:
             break
-        expr = input("Expression: ").strip()
+        try:
+            expr = input("Expression: ").strip()
+        except (EOFError, KeyboardInterrupt):
+            raise SystemExit
         if not expr:
             print("Expression cannot be empty.")
             continue
@@ -1900,7 +2031,10 @@ def even_odd_functions():
     UI.clear()
     print("EVEN/ODD FUNCTIONS")
     print("Enter function as expression in x, e.g., x^2, x^3, x^2+x, etc.")
-    expr = input("f(x) = ").strip()
+    try:
+        expr = input("f(x) = ").strip()
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if not expr:
         print("No expression entered.")
         UI.wait()
@@ -1957,7 +2091,10 @@ def domain_range_finder():
     print("3. Radical (sqrt of expression)")
     print("4. Logarithmic (log of expression)")
     print("5. Exponential (a*b^x)")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     steps = []
     if ch == "1":
         steps.append("Polynomials are defined for all real x.")
@@ -1986,7 +2123,10 @@ def domain_range_finder():
                 ha = a / c
                 final = "Domain: x ≠ {}; Horizontal asymptote y = {} (range excludes y = {})".format(va, ha, ha)
     elif ch == "3":
-        expr = input("Inside sqrt: ").strip()
+        try:
+            expr = input("Inside sqrt: ").strip()
+        except (EOFError, KeyboardInterrupt):
+            raise SystemExit
         steps.append("Domain: expression inside sqrt must be >= 0")
         steps.append("Solve {} >= 0".format(expr))
         try:
@@ -2001,7 +2141,10 @@ def domain_range_finder():
             steps.append("Could not evaluate: {}".format(e))
         final = "Domain: x such that {} >= 0".format(expr)
     elif ch == "4":
-        arg = input("Argument: ").strip()
+        try:
+            arg = input("Argument: ").strip()
+        except (EOFError, KeyboardInterrupt):
+            raise SystemExit
         steps.append("Domain: argument must be > 0")
         steps.append("Solve {} > 0".format(arg))
         final = "Domain: x such that {} > 0".format(arg)
@@ -2026,8 +2169,11 @@ def function_composition():
     UI.clear()
     print("FUNCTION COMPOSITION (f∘g)(x)")
     print("Enter f(x) and g(x) as expressions in x.")
-    f_expr = input("f(x) = ").strip()
-    g_expr = input("g(x) = ").strip()
+    try:
+        f_expr = input("f(x) = ").strip()
+        g_expr = input("g(x) = ").strip()
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if not f_expr or not g_expr:
         print("Both functions required.")
         UI.wait()
@@ -2304,7 +2450,10 @@ def speed_distance_time():
     print("1. Find speed")
     print("2. Find distance")
     print("3. Find time")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if ch == "1":
         d = UI.get_float("Distance = ")
         t = UI.get_positive_float("Time = ")
@@ -2350,7 +2499,10 @@ def percent_problems():
     print("1. Find % of a number")
     print("2. Percent increase/decrease")
     print("3. Discount / Tax / Tip")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if ch == "1":
         p = UI.get_float("Percent (%) = ")
         base = UI.get_float("Number = ")
@@ -2382,7 +2534,10 @@ def percent_problems():
         print("1. Discount")
         print("2. Sales tax")
         print("3. Tip")
-        sub = input("Choice: ")
+        try:
+            sub = input("Choice: ")
+        except (EOFError, KeyboardInterrupt):
+            raise SystemExit
         price = UI.get_positive_float("Original price = ")
         rate = UI.get_float("Rate (%) = ")
         if sub == "1":
@@ -2457,7 +2612,10 @@ def compound_probability():
     print("Compound Probability")
     print("1. P(A and B) = P(A)*P(B) if independent")
     print("2. P(A or B) = P(A)+P(B)-P(A and B)")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     pa = UI.get_probability("P(A) = ")
     pb = UI.get_probability("P(B) = ")
     if ch == "1":
@@ -2524,7 +2682,10 @@ def conditional_probability():
 def descriptive_stats():
     UI.clear()
     print("Enter numbers separated by spaces:")
-    data_str = input("> ")
+    try:
+        data_str = input("> ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     try:
         nums = [parse_number(x) for x in data_str.split()]
     except Exception:
@@ -2589,7 +2750,10 @@ def frequency_table_stats():
     UI.clear()
     print("Enter value and frequency pairs (space separated), e.g., '1 5 2 3' (value=1 freq=5, value=2 freq=3)")
     print("Enter all pairs: ")
-    data = input("> ").split()
+    try:
+        data = input("> ").split()
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if len(data) % 2 != 0:
         print("Must have even number of entries.")
         UI.wait()
@@ -2673,7 +2837,10 @@ def box_plot_stats():
 def best_fit_line():
     UI.clear()
     print("Enter points (x y) separated by spaces, e.g., '1 2 3 4 5 6' gives (1,2),(3,4),(5,6)")
-    data = input("> ").split()
+    try:
+        data = input("> ").split()
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if len(data) % 2 != 0:
         print("Must have even number of entries.")
         UI.wait()
@@ -2770,7 +2937,10 @@ def scatterplot_interpretation():
     UI.clear()
     print("SCATTERPLOT INTERPRETATION")
     print("Enter points (x y) separated by spaces, e.g., '1 2 3 4 5 6'")
-    data = input("> ").split()
+    try:
+        data = input("> ").split()
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if len(data) % 2 != 0:
         print("Must have even number of entries.")
         UI.wait()
@@ -2831,12 +3001,15 @@ def surveys_experiments():
     UI.clear()
     print("SURVEYS & EXPERIMENTS EVALUATOR")
     print("Answer questions to evaluate study design:")
-    print("1. Was the sample random? (y/n)")
-    rand = input("> ").strip().lower()
-    print("2. Was there a control group? (y/n)")
-    control = input("> ").strip().lower()
-    print("3. Could there be bias? (y/n)")
-    bias = input("> ").strip().lower()
+    try:
+        print("1. Was the sample random? (y/n)")
+        rand = input("> ").strip().lower()
+        print("2. Was there a control group? (y/n)")
+        control = input("> ").strip().lower()
+        print("3. Could there be bias? (y/n)")
+        bias = input("> ").strip().lower()
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     steps = []
     steps.append("Sample random: {}".format(rand))
     steps.append("Control group: {}".format(control))
@@ -2889,7 +3062,10 @@ def weighted_average():
     UI.clear()
     print("WEIGHTED AVERAGE")
     print("Enter values and weights as pairs: value weight, value weight, ...")
-    data = input("> ").split()
+    try:
+        data = input("> ").split()
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if len(data) % 2 != 0:
         print("Must have even number of entries.")
         UI.wait()
@@ -2929,7 +3105,10 @@ def data_table_analysis():
     rows = []
     print("Enter rows (empty line to finish):")
     while True:
-        line = input("> ").strip()
+        try:
+            line = input("> ").strip()
+        except (EOFError, KeyboardInterrupt):
+            raise SystemExit
         if not line:
             break
         rows.append(line.split())
@@ -2947,7 +3126,8 @@ def data_table_analysis():
     steps.append("Table rows: {}".format(data))
     n_cols = len(data[0])
     equal_lengths = all(len(row) == n_cols for row in data)
-    if equal_lengths and all(isinstance(x, float) for x in data[0]):
+    all_float = all(isinstance(x, float) for row in data for x in row)
+    if equal_lengths and all_float:
         col_sums = [sum(row[i] for row in data) for i in range(n_cols)]
         col_means = [s / len(data) for s in col_sums]
         steps.append("Column sums: {}".format(col_sums))
@@ -2973,7 +3153,10 @@ def area_menu():
     print("5. Trapezoid")
     print("6. Circle")
     print("7. Sector")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if ch == "1":
         l = UI.get_positive_float("length = ")
         w = UI.get_positive_float("width = ")
@@ -3068,7 +3251,10 @@ def volume_menu():
     print("3. Cone")
     print("4. Sphere")
     print("5. Pyramid")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if ch == "1":
         B = UI.get_positive_float("base area = ")
         h = UI.get_positive_float("height = ")
@@ -3141,7 +3327,10 @@ def surface_area_menu():
     print("4. Cone")
     print("5. Sphere")
     print("6. Pyramid (square base)")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if ch == "1":
         s = UI.get_positive_float("Side length = ")
         steps = []
@@ -3265,7 +3454,10 @@ def lines_and_angles():
     print("Lines & Angles")
     print("1. Complementary/Supplementary")
     print("2. Parallel lines with transversal")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if ch == "1":
         a = UI.get_float("Given angle (degrees) = ")
         steps = []
@@ -3303,7 +3495,10 @@ def triangles():
     print("1. Angle sum (180)")
     print("2. Exterior angle theorem")
     print("3. Similarity scale factor")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if ch == "1":
         a1 = UI.get_positive_float("Angle 1 = ")
         a2 = UI.get_positive_float("Angle 2 = ")
@@ -3361,11 +3556,17 @@ def right_triangles():
     print("Right Triangles")
     print("1. Pythagorean Theorem (find missing side)")
     print("2. Special right triangles (30-60-90, 45-45-90)")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if ch == "1":
         print("1. Hypotenuse")
         print("2. Leg")
-        sub = input("Choice: ")
+        try:
+            sub = input("Choice: ")
+        except (EOFError, KeyboardInterrupt):
+            raise SystemExit
         if sub == "1":
             a = UI.get_positive_float("Leg a = ")
             b = UI.get_positive_float("Leg b = ")
@@ -3399,7 +3600,10 @@ def right_triangles():
     elif ch == "2":
         print("1. 45-45-90")
         print("2. 30-60-90")
-        sub = input("Choice: ")
+        try:
+            sub = input("Choice: ")
+        except (EOFError, KeyboardInterrupt):
+            raise SystemExit
         if sub == "1":
             leg = UI.get_positive_float("Leg length = ")
             steps = []
@@ -3437,10 +3641,16 @@ def trigonometry():
     print("Trigonometry (Right Triangle)")
     print("1. Find missing side (angle and side known)")
     print("2. Find missing angle (two sides known)")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if ch == "1":
         print("Known: 1) hypotenuse, 2) leg")
-        side_known = input("Which side is known? (hyp/leg): ").strip().lower()
+        try:
+            side_known = input("Which side is known? (hyp/leg): ").strip().lower()
+        except (EOFError, KeyboardInterrupt):
+            raise SystemExit
         if side_known == "hyp":
             hyp = UI.get_positive_float("Hypotenuse = ")
             angle = UI.get_float("Angle (degrees) = ")
@@ -3507,7 +3717,10 @@ def circles():
     print("1. Circumference & Area")
     print("2. Arc length & Sector area")
     print("3. Equation of circle (center-radius)")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if ch == "1":
         r = UI.get_positive_float("Radius = ")
         steps = []
@@ -3562,7 +3775,10 @@ def circle_theorems():
     print("1. Inscribed angle from intercepted arc")
     print("2. Central angle from inscribed angle")
     print("3. Arc measure from inscribed angle")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if ch == "1":
         arc = UI.get_positive_float("Intercepted arc measure (degrees) = ")
         steps = []
@@ -3689,7 +3905,10 @@ def law_of_cosines():
     print("LAW OF COSINES")
     print("1. SAS (two sides and included angle)")
     print("2. SSS (three sides to find angle)")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if ch == "1":
         a = UI.get_positive_float("side a = ")
         b = UI.get_positive_float("side b = ")
@@ -3806,7 +4025,10 @@ def similar_figures():
     print("Given two similar figures, find scale factor or missing side.")
     print("1. Find scale factor from two corresponding sides")
     print("2. Find missing side using scale factor")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if ch == "1":
         s1 = UI.get_positive_float("Side in figure 1 = ")
         s2 = UI.get_positive_float("Corresponding side in figure 2 = ")
@@ -3880,7 +4102,10 @@ def transformations_geometry():
     print("5. Rotation 180°")
     print("6. Rotation 270° counterclockwise")
     print("7. Translation (dx, dy)")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if ch == "1":
         new = (x, -y)
         steps.append("Reflect over x-axis → ({}, {})".format(new[0], new[1]))
@@ -3930,7 +4155,10 @@ def complex_numbers():
     print("2. Multiply")
     print("3. Divide")
     print("4. Modulus & Conjugate")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     a1 = UI.get_float("a1 = ")
     b1 = UI.get_float("b1 = ")
     a2 = b2 = 0
@@ -3938,7 +4166,10 @@ def complex_numbers():
         a2 = UI.get_float("a2 = ")
         b2 = UI.get_float("b2 = ")
     if ch == "1":
-        s = input("Add (+) or Subtract (-): ").strip()
+        try:
+            s = input("Add (+) or Subtract (-): ").strip()
+        except (EOFError, KeyboardInterrupt):
+            raise SystemExit
         if s not in ("+", "-"):
             print("Operator must be + or -.")
             UI.wait()
@@ -4014,7 +4245,10 @@ def sequences_series():
     print("SEQUENCES & SERIES")
     print("1. Arithmetic: nth term & sum")
     print("2. Geometric: nth term & sum (finite/infinite)")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if ch == "1":
         a1 = UI.get_float("first term a1 = ")
         d = UI.get_float("common difference d = ")
@@ -4045,12 +4279,12 @@ def sequences_series():
             Sn = a1 * (1 - r**n) / (1 - r)
             steps.append("S_{} = {} * (1 - {}^{}) / (1 - {}) = {}".format(n, a1, r, n, r, Sn))
         final = "a_{} = {}, S_{} = {}".format(n, an, n, Sn)
-        if abs(r) < 1 and r != 0:
+        if abs(r) < 1:
             S_inf = a1 / (1 - r)
             steps.append("Infinite sum S∞ = a1 / (1 - r) = {} / {} = {}".format(a1, 1-r, S_inf))
             final += ", Infinite sum = {}".format(S_inf)
         else:
-            steps.append("|r| >= 1 or r = 0 → no finite infinite sum.")
+            steps.append("|r| >= 1 → no finite infinite sum.")
         for i, s in enumerate(steps, 1):
             print("Step {}: {}".format(i, s))
         print("\n" + "─" * 40)
@@ -4067,7 +4301,10 @@ def combinatorics():
     print("1. Factorial n!")
     print("2. Permutations nPr")
     print("3. Combinations nCr")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if ch == "1":
         n = UI.get_nonnegative_int("n = ")
         fact = 1
@@ -4162,7 +4399,10 @@ def matrices():
     print("1. Determinant")
     print("2. Inverse")
     print("3. Solve system using matrices")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if ch == "1":
         a11 = UI.get_float("a11 = ")
         a12 = UI.get_float("a12 = ")
@@ -4237,7 +4477,10 @@ def vectors():
     print("1. Magnitude")
     print("2. Dot product")
     print("3. Angle between")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     x1 = UI.get_float("x1 = ")
     y1 = UI.get_float("y1 = ")
     if ch == "1":
@@ -4293,7 +4536,10 @@ def radian_degree():
     print("RADIAN <-> DEGREE CONVERTER")
     print("1. Radians to Degrees")
     print("2. Degrees to Radians")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if ch == "1":
         rad = UI.get_float("radians = ")
         steps = []
@@ -4441,7 +4687,10 @@ def frac_dec_percent():
     print("2. Decimal -> Fraction (approx)")
     print("3. Decimal -> Percent")
     print("4. Percent -> Decimal")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if ch == "1":
         num = UI.get_float("Numerator = ")
         den = UI.get_nonzero_float("Denominator = ")
@@ -4510,7 +4759,10 @@ def scientific_notation():
     UI.clear()
     print("1. Standard to Scientific")
     print("2. Scientific to Standard")
-    ch = input("Choice: ")
+    try:
+        ch = input("Choice: ")
+    except (EOFError, KeyboardInterrupt):
+        raise SystemExit
     if ch == "1":
         num = UI.get_float("Number = ")
         if not is_finite_number(num):
@@ -4587,23 +4839,26 @@ def formula_reference():
         print("{}. Return".format(len(formulas)+1))
         try:
             ch = int(input("Choice: "))
-            if 1 <= ch <= len(formulas):
-                name = formulas[ch-1]
-                f = FORMULA_REFERENCE[name]
-                UI.clear()
-                print("--- {} ---".format(name))
-                print("Formula: {}".format(f['formula']))
-                print("Variables: {}".format(f['vars']))
-                print("When to use: {}".format(f['use']))
-                print("Example: {}".format(f['example']))
-                UI.wait()
-            elif ch == len(formulas)+1:
-                break
-            else:
-                print("Invalid choice.")
-                UI.wait()
+        except (EOFError, KeyboardInterrupt):
+            raise SystemExit
         except Exception:
             print("Invalid input.")
+            UI.wait()
+            continue
+        if 1 <= ch <= len(formulas):
+            name = formulas[ch-1]
+            f = FORMULA_REFERENCE[name]
+            UI.clear()
+            print("--- {} ---".format(name))
+            print("Formula: {}".format(f['formula']))
+            print("Variables: {}".format(f['vars']))
+            print("When to use: {}".format(f['use']))
+            print("Example: {}".format(f['example']))
+            UI.wait()
+        elif ch == len(formulas)+1:
+            break
+        else:
+            print("Invalid choice.")
             UI.wait()
 
 
@@ -4640,7 +4895,10 @@ def main_menu():
             print("{}. {}".format(idx, cat))
         print("{}. Exit".format(len(categories)+1))
         print("S. Search solvers by keyword")
-        choice = input("Enter choice: ").strip()
+        try:
+            choice = input("Enter choice: ").strip()
+        except (EOFError, KeyboardInterrupt):
+            raise SystemExit
         if choice.lower() == "s":
             search_solver()
             continue
@@ -4656,7 +4914,10 @@ def main_menu():
                     for key, (name, _) in items:
                         print("{}. {}".format(key, name))
                     print("0. Return to main menu")
-                    sub_choice = input("Choice: ")
+                    try:
+                        sub_choice = input("Choice: ")
+                    except (EOFError, KeyboardInterrupt):
+                        raise SystemExit
                     if sub_choice == "0":
                         break
                     elif sub_choice in solvers:
